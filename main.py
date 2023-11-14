@@ -6,44 +6,73 @@ from turtle import *
 from customtkinter import CTk, CTkFrame, CTkButton, CTkLabel, CTkEntry, CTkSlider, CTkComboBox
 from tkinter import filedialog, PhotoImage, messagebox as mb
 
-gramaticaX = ['+', 'Y', 'F', '-', 'X', 'F', 'X', '-', 'F', 'Y', '+']     # X -> + Y F - X F X - F Y +
-gramaticaY = ['-', 'X', 'F', '+', 'Y', 'F', 'Y', '+', 'F', 'X', '-']     # Y -> - X F + Y F Y + F X -
-cadenaNew = []
-#cadenaR = []     
-cadenaR = ['+', 'Y', 'F', '-', 'X', 'F', 'X', '-', 'F', 'Y', '+']
+class Tortuga():
+    #instancia = turtle.Turtle()
+    instancia = None
+    
+    def __new__(cls):
+        return cls.instancia
+    
+    @classmethod
+    def getInstancia(cls):
+        if not cls.instancia:
+            cls.instancia = turtle.Turtle()
+        return cls.instancia
+    
+    @classmethod
+    def resetInstance(cls):
+        if cls.instancia:
+            try:
+                cls.instancia.getscreen().bye()
+            except turtle.Terminator:
+                pass
+            cls.instancia = cls.getInstancia()
 
 def configGrafico():
     colorBack = str(selectBackColor.get())
     colorLinea = str(selectLineaColor.get())
     tamañoLinea = str(sliderLinea.get())
-    varGrado.set(int(inputGrado.get()))
+    #varGrado.set(int(inputGrado.get()))
+    print(inputGrado.get())
     #bgcolor(str(colorBack))
-    #pencolor(str(colorLinea))
+    print(str(colorLinea))
+    #pencolor(colorLinea)
     #pensize(int(tamañoLinea))
     #
 
 def dibujar(cadena):
-    tortuga = turtle.Screen()
-    tortuga.title('Aguante la ACADEMIA')
+    #tortuga = Tortuga.getInstancia()
+    tortuga = turtle.Turtle()
+    #Mostrar ventana de Tortuga
+    #turtle.done()
+    #title('Aguante la ACADEMIA')
     print("------En Metodo Dibujar")
     print(cadena)
     configGrafico()
+    angulo = int(inputGrado.get())
+    print('*'*20)
+    print(angulo)
+    #forward(100)
     for d in range(0,len(cadena)):
         if cadena[d] == '+':
-            left(int(varGrado.get()))
+            tortuga.left(90)
         elif cadena[d] == '-':
-            right(int(varGrado.get()))
+            tortuga.right(90)
         elif cadena[d] == 'F':
-            forward(100)
+            tortuga.forward(10)
         elif cadena[d] == 'Y':
             continue
         elif cadena[d] == 'X':
             continue
-    tortuga.update()
-    tortuga.delay(2000)
+    #update()
+    turtle.mainloop()
+    turtle.delay(500)
+    turtle.clear()
+    #Tortuga.resetInstance()
+    #tortuga.exitonclick()
     #mainloop()
     
-def newNivel():
+def newNivel(cadenaR, cadenaNew, gramaticaY, gramaticaX):
     print("------En Metodo newNivel")
     print(cadenaR)
     for i in range(0,len(cadenaR)):
@@ -61,7 +90,7 @@ def newNivel():
                 cadenaNew.append(gramaticaX[x])
     print(cadenaNew)
 
-def remplazar():
+def remplazar(cadenaNew, cadenaR):
     print("------En Metodo Remplazar")
     print(cadenaNew)
     print(cadenaR)
@@ -83,17 +112,24 @@ def remplazar():
     cadenaNew.clear()
 
 def ejecucion():       # depende de las iteraciones que nos de las hacemos
+    gramaticaX = ['+', 'Y', 'F', '-', 'X', 'F', 'X', '-', 'F', 'Y', '+']     # X -> + Y F - X F X - F Y +
+    gramaticaY = ['-', 'X', 'F', '+', 'Y', 'F', 'Y', '+', 'F', 'X', '-']     # Y -> - X F + Y F Y + F X -
+    cadenaNew = []
+    #cadenaR = []     
+    cadenaR = ['+', 'Y', 'F', '-', 'X', 'F', 'X', '-', 'F', 'Y', '+']
     numeroI = int(inputNivel.get())
+    print(inputNivel.get())
+    #cadenaR = gramaticaX.copy()
     if numeroI == 0:
         dibujar(gramaticaX)
     if numeroI >= 1:
-        #cadenaR = gramaticaX.copy()
         #cadenaR = list(gramaticaX)
         for i in range(numeroI):    
-            newNivel()
-            remplazar()
-    dibujar(cadenaR)
-    cadenaR.clear()
+            newNivel(cadenaR, cadenaNew, gramaticaY, gramaticaX)
+            remplazar(cadenaNew, cadenaR)
+        print("Vamos a dibujar")
+        dibujar(cadenaR)
+    #cadenaR.clear()
 
 def sliderEvent(value):
     print(value)
